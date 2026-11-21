@@ -1,0 +1,7 @@
+torch
+torchvision
+rasterio
+numpy
+scikit-image
+matplotlib
+tqdm
