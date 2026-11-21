@@ -33,16 +33,21 @@ def run_inference(args):
 
     C, H, W = img.shape
     s = args.scale
+    pad = 16  # 16 LR pixels (64 HR pixels) of overlap to eliminate border seams
+    img_pad = np.pad(img, ((0, 0), (pad, pad), (pad, pad)), mode="reflect")
+
     sr_canvas = np.zeros((C, H * s, W * s), dtype=np.float32)
     unc_canvas = np.zeros((H * s, W * s), dtype=np.float32)
 
     for y in range(0, H, args.tile_size):
         for x in range(0, W, args.tile_size):
             y2, x2 = min(y + args.tile_size, H), min(x + args.tile_size, W)
-            tile = torch.from_numpy(img[:, y:y2, x:x2]).unsqueeze(0).to(device)
+            tile = torch.from_numpy(img_pad[:, y:y2 + 2 * pad, x:x2 + 2 * pad]).unsqueeze(0).to(device)
             sr_tile, unc_tile = predict_with_tta(model, tile)
-            sr_canvas[:, y*s:y2*s, x*s:x2*s] = sr_tile
-            unc_canvas[y*s:y2*s, x*s:x2*s] = unc_tile
+
+            p = pad * s
+            sr_canvas[:, y*s:y2*s, x*s:x2*s] = sr_tile[:, p:-p, p:-p]
+            unc_canvas[y*s:y2*s, x*s:x2*s] = unc_tile[p:-p, p:-p]
 
     os.makedirs(os.path.dirname(args.output_sr) or ".", exist_ok=True)
     new_transform = orig_transform * orig_transform.scale(1.0 / s, 1.0 / s)
@@ -73,6 +78,6 @@ if __name__ == "__main__":
     parser.add_argument("--nf", type=int, default=cfg.nf)
     parser.add_argument("--gc", type=int, default=cfg.gc)
     parser.add_argument("--nb", type=int, default=cfg.num_rrdb_blocks)
-    parser.add_argument("--tile_size", type=int, default=64)
+    parser.add_argument("--tile_size", type=int, default=128)
     parser.add_argument("--device", default=cfg.device)
     run_inference(parser.parse_args())
