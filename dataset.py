@@ -41,6 +41,9 @@ class Sentinel2GeoDataset(Dataset):
         return len(self.lr_files) * self.repeat
 
     def __getitem__(self, idx):
+        if idx >= len(self) or idx < 0:
+            raise IndexError(f"Index {idx} out of range for dataset of length {len(self)}")
+
         file_idx = idx % len(self.lr_files)
         lr_path = self.lr_files[file_idx]
         hr_path = self.hr_files[file_idx]
