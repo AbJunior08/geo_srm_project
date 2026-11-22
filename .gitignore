@@ -1,6 +1,13 @@
-venv/
-__pycache__/
-data/
+﻿__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.pth
+*.pt
+*.tif
+*.tiff
 runs/
-*.pyc
+data/
+.DS_Store
+
+venv/
 .vscode/

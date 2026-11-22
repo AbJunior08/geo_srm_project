@@ -52,3 +52,15 @@ python predict.py \
   --output_sr runs/geoatt_rrdb_3k/vienna1_sr.tif \
   --output_unc runs/geoatt_rrdb_3k/vienna1_unc.tif \
   --tile_size 128
+
+## Visual & Engineering Proofs
+
+### 4× Super-Resolution & Epistemic Uncertainty (`vienna1`)
+![4-Panel Comparison](assets/vienna1_comparison_3k.png)
+
+### Quantitative Performance & Engineering Optimizations
+![Metrics Comparison](assets/chart_metrics_comparison.png)
+![Engineering Impact](assets/chart_engineering_impact.png)
+
+* **Full Per-Tile Metrics (36 Unseen Vienna Tiles):** [`results/vienna_per_tile_proof.csv`](results/vienna_per_tile_proof.csv)
+* **Complete Technical Report:** [`docs/GeoAtt_RRDBNet_Project_Report.docx`](docs/GeoAtt_RRDBNet_Project_Report.docx)
